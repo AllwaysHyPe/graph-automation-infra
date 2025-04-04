@@ -35,3 +35,31 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Sensitive local env files
+.env
+*.env
+.env.*
+
+# Local settings
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs / temp
+*.log
+*.bak
+*.tmp
+
+# PowerShell artifacts
+*.ps1xml
+*.psd1
+*.pfx
+*.publishsettings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Windows PowerShell cache
+*.ps1~*
