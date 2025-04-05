@@ -42,8 +42,7 @@ You do **not** need to commit a `terraform.tfvars` file or hardcode these in Git
 ```
 graph-automation-infra/
 ├── .github/workflows/        # GitHub Actions for CI/CD
-│   ├── deploy.yml
-│   └── detroy.yml
+│   └── deploy.yml
 ├── modules/graph-photo-sync/ # Terraform module
 │   ├── main.tf
 │   ├── variables.tf
@@ -127,30 +126,6 @@ This will:
 - Inject Terraform input variables
 - Run ```terraform init```, ```plan```, and ```apply```
 - Upload the PowerShell runbook to the Automation Account
-
----
-
-### 7. Destroy the Terraform-managed infrastructure
-
-To tear down all Terraform-managed resources (while keeping the resource group intact for future use), use the `destroy.yml` workflow.
-
-#### Steps to Run It
-
-1. Go to the **Actions** tab in your GitHub repository  
-2. Select **Destroy Graph Automation Infra**
-3. Click **Run workflow**
-
-This workflow will:
-- Authenticate to Azure using your GitHub Actions secrets
-- Run `terraform destroy -auto-approve`
-- Remove all Terraform-managed resources:
-  - Automation Account
-  - PowerShell Runbook
-  - Az.Accounts module (if installed by Terraform)
-
-The resource group will remain since it's managed outside Terraform via the `New-AzGraphAutomationServicePrincipal.ps1` script.
-
----
 
 ## Notes
 - The Automation Account uses a system-assigned managed identity
