@@ -18,13 +18,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Cache Terraform provider directory
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.terraform.d/plugin-cache
+            .terraform
+          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.5.7
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -plugin-dir=$HOME/.terraform.d/plugin-cache
 
       - name: Terraform Plan
         id: plan
