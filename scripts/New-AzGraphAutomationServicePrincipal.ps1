@@ -33,6 +33,7 @@ if ($LASTEXITCODE -ne 0) {
     log "Login successful."
 } else {
     log "Already logged in to Azure."
+}
 
 log "Checking if resource group '$ResourceGroupName' exists..."
 $rgExists = az group exists --name $ResourceGroupName --subscription $SubscriptionId | ConvertFrom-Json
@@ -48,7 +49,7 @@ if (-not $rgExists) {
 } else {
     log "Resource group already exists."
 }
-}
+
 
 log "Creating service principal '$ServicePrincipalName' scoped to resource group '$ResourceGroupName'..."
 

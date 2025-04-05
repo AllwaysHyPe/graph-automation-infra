@@ -2,8 +2,8 @@
 # This file is for local testing only.
 # Do NOT include secrets here — use GitHub Actions secrets for CI/CD.
 
-resource_group_name     = "rg-graph-automation"
+resource_group_name     = "rgGraphAutomationInfra"
 location                = "westus"
-automation_account_name = "graphautomation"
+automation_account_name = "terraform-gh-action"
 runbook_name            = "GraphUserPhotoSync"
 script_path             = "./Scripts/GraphUserPhotoSync-Automation.ps1"

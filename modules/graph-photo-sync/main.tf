@@ -1,10 +1,6 @@
-# modules/graph-photo-sync/main.tf
+# main.tf (inside modules/graph-photo-sync)
 
-resource "azurerm_user_assigned_identity" "automation_identity" {
-  name                = "${var.automation_account_name}-identity"
-  location            = var.location
-  resource_group_name = var.resource_group_name
-}
+# NOTE: The resource group is expected to exist, created via the New-AzGraphAutomationServicePrincipal.ps1 script.
 
 resource "azurerm_automation_account" "automation" {
   name                = var.automation_account_name
@@ -12,8 +8,7 @@ resource "azurerm_automation_account" "automation" {
   resource_group_name = var.resource_group_name
   sku_name            = "Free"
   identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.automation_identity.id]
+    type = "SystemAssigned"
   }
 }
 
@@ -28,10 +23,4 @@ resource "azurerm_automation_runbook" "runbook" {
   description             = "Runbook to sync user photos with Microsoft Graph"
   content                 = file(var.script_path)
   depends_on              = [azurerm_automation_account.automation]
-}
-
-resource "azurerm_role_assignment" "automation_identity_contributor" {
-  scope                = azurerm_automation_account.automation.id
-  role_definition_name = "Contributor"
-  principal_id         = azurerm_user_assigned_identity.automation_identity.principal_id
 }
