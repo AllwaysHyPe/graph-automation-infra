@@ -35,7 +35,10 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-
+      
+      - name: Terraform Validate
+        run: terraform validate
+      
       - name: Terraform Plan
         run: |
           terraform plan \
@@ -44,8 +47,11 @@ jobs:
             -var="automation_account_name=${{ secrets.TF_AUTOMATION_ACCOUNT_NAME }}" \
             -var="runbook_name=${{ secrets.TF_RUNBOOK_NAME }}" \
             -var="script_path=./scripts/GraphUserPhotoSync-Automation.ps1" \
+            -var="az_accounts_zip_path=./scripts/Az.Accounts.2.12.1.zip" \
+            -var="az_accounts_module_uri=${{ secrets.AZ_ACCOUNTS_MODULE_URI }}" \
+            -var="az_accounts_module_version=${{ secrets.AZ_ACCOUNTS_MODULE_VERSION }}" \
             -out=tfplan
-
+      
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
