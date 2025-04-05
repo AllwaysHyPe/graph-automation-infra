@@ -52,7 +52,8 @@ graph-automation-infra/
 │   ├── GraphUserPhotoSync-Automation.ps1
 │   ├── New-AzGraphAutomationServicePrincipal.ps1
 │   ├── Register-AzProviders.ps1
-│   └── Remove-AzGraphAutomationServicePrincipal.ps1
+│   ├── Remove-AzGraphAutomationServicePrincipal.ps1
+│   └── Verify-AzModuleHash.ps1
 ├── main.tf                   # Root Terraform configuration
 ├── variables.tf              # Input variables
 ├── outputs.tf                # Terraform outputs
