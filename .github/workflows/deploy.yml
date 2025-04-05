@@ -43,7 +43,7 @@ jobs:
             -var="location=${{ secrets.TF_LOCATION }}" \
             -var="automation_account_name=${{ secrets.TF_AUTOMATION_ACCOUNT_NAME }}" \
             -var="runbook_name=${{ secrets.TF_RUNBOOK_NAME }}" \
-            -var="script_path=./Scripts/GraphUserPhotoSync-Automation.ps1" \
+            -var="script_path=./scripts/GraphUserPhotoSync-Automation.ps1" \
             -out=tfplan
 
       - name: Terraform Apply

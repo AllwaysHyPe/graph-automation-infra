@@ -93,9 +93,9 @@ graph-automation-infra/
 4. Add all required secrets to your GitHub repo (see list above).***Settings*** > ***Secrets and variables*** > ***Actions***.
 
 5. Trigger the deployment workflow
-   1. Go to the **Actions** tab in GitHub
-   2. Select **Deploy Graph Automation Infra** workflow
-   3. Click **Run workflow**
+- Go to the **Actions** tab in GitHub
+- Select **Deploy Graph Automation Infra** workflow
+- Click **Run workflow**
 
 This will:
 - Authenticate to Azure using secrets
