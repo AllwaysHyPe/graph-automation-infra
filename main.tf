@@ -13,7 +13,6 @@ terraform {
 
 provider "azurerm" {
   features {}
-  resource_provider_registrations = "none"
   # NOTE: This disables automatic resource provider registration.
   # Make sure required providers are registered manually (e.g., Microsoft.Automation).
   # To register manually, use:
