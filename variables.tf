@@ -1,16 +1,16 @@
 variable "resource_group_name" {
-  description = "The name of the Azure resource group to create or use"
+  description = "The name of the existing Azure resource group"
   type        = string
 }
 
 variable "location" {
-  description = "The Azure region to deploy into"
+  description = "The Azure region to deploy resources in"
   type        = string
   default     = "westus"
 }
 
 variable "automation_account_name" {
-  description = "The name of the Azure Automation Account"
+  description = "The name of the Azure Automation Account to create"
   type        = string
 }
 
@@ -20,22 +20,22 @@ variable "runbook_name" {
   default     = "GraphUserPhotoSync"
 }
 
+variable "script_path" {
+  description = "Local path to the PowerShell script that will be uploaded as a runbook"
+  type        = string
+}
+
 variable "az_accounts_zip_path" {
-  description = "Local path to the Az.Accounts zip file used for hash validation"
+  description = "Local path to the zipped Az.Accounts module used for content hash validation"
   type        = string
 }
 
 variable "az_accounts_module_uri" {
-  description = "Public URL to the zipped Az.Accounts module"
+  description = "Public URL to the zipped Az.Accounts module for PowerShell 7.2"
   type        = string
 }
 
 variable "az_accounts_module_version" {
-  description = "Version of the Az.Accounts module being installed"
-  type        = string
-}
-
-variable "script_path" {
-  description = "Path to the PowerShell script that will be uploaded as a runbook"
+  description = "Version of Az.Accounts module being installed"
   type        = string
 }
