@@ -1,3 +1,8 @@
+# Binary modules
+*.zip
+!scripts/Az.Accounts.2.12.1.zip
+
+
 # Local .terraform directories
 **/.terraform/*
 
