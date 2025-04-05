@@ -68,21 +68,36 @@ graph-automation-infra/
      -SubscriptionId "<your-subscription-id>" \
      -ServicePrincipalName "terraform-gh-action"
    ```
-   This will create:
-   - A new resource group (if needed)
-   - A scoped service principal
-   - The values you need to add to GitHub Actions secrets
+   This will:
+   - Log into Azure
+   - Create the resource group if needed
+   - Create a scoped service principal
+   - Output values for GitHub Actions secrets
 
-3. Add all required secrets to your GitHub repo (see list above).
+3. Register the Azure provider:
+   ```bash
+      az provider register --namespace Microsoft.Automation
+   ```
+   Only required once per subscription.
 
-4. Push your code (or just open the repo) and go to the **Actions** tab.
+4. Add all required secrets to your GitHub repo (see list above).***Settings*** > ***Secrets and variables*** > ***Actions***.
+
+5. Push your code (or just open the repo) and go to the **Actions** tab.
    Select the **Deploy Graph Automation Infra** workflow.
 
-5. Click **Run workflow**.
+6. Click **Run workflow**.
 
 This will:
 - Authenticate to Azure using the secrets
 - Inject your Terraform variables
 - Run `terraform init`, `plan`, and `apply`
 - Upload the PowerShell runbook to your Automation Account
+
+
+## Notes
+- The Automation Account uses a system-assigned managed identity
+- Terraform disables provider registration (```resource_provider_registrations = "none"```)
+- Resource group must be created via script or exist already
+- All secrets and config values are passed securely through GitHub Actions
+
 

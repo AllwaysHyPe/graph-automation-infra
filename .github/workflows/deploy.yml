@@ -3,42 +3,40 @@ name: Deploy Graph Automation Infra
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
-  deploy:
-    name: Deploy with Terraform
+  terraform:
+    name: Terraform Plan & Apply
     runs-on: ubuntu-latest
 
     env:
-      ARM_CLIENT_ID:       ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET:   ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
       ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID:       ${{ secrets.AZURE_TENANT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Cache Terraform provider directory
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Cache Terraform plugins
         uses: actions/cache@v3
         with:
           path: |
-            ~/.terraform.d/plugin-cache
             .terraform
-          key: ${{ runner.os }}-terraform-${{ hashFiles('**/*.tf') }}
-
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.5.7
-
-      - name: Create plugin cache directory
-        run: mkdir -p $HOME/.terraform.d/plugin-cache
+          key: terraform-${{ runner.os }}-${{ hashFiles('**/*.tf') }}
+          restore-keys: terraform-${{ runner.os }}
 
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Plan
-        id: plan
         run: |
           terraform plan \
             -var="resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}" \
@@ -51,5 +49,5 @@ jobs:
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
 
-      - name: Show Terraform Output
+      - name: Terraform Output
         run: terraform output -json

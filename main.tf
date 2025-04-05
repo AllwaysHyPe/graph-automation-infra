@@ -1,3 +1,5 @@
+# root main.tf
+
 terraform {
   required_providers {
     azurerm = {
@@ -11,6 +13,15 @@ terraform {
 
 provider "azurerm" {
   features {}
+  resource_provider_registrations = "none"
+  # NOTE: This disables automatic resource provider registration.
+  # Make sure required providers are registered manually (e.g., Microsoft.Automation).
+  # To register manually, use:
+  # az provider register --namespace Microsoft.Automation
+  # To check status:
+  # az provider show --namespace Microsoft.Automation --query "registrationState"
+
+  resource_provider_registrations = "none"
 }
 
 module "graph_photo_sync" {
@@ -20,4 +31,4 @@ module "graph_photo_sync" {
   automation_account_name = var.automation_account_name
   runbook_name            = var.runbook_name
   script_path             = var.script_path
-} 
+}
