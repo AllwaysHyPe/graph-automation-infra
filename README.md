@@ -48,7 +48,7 @@ graph-automation-infra/
 │   ├── variables.tf
 │   ├── outputs.tf
 │   └── README.md
-├── Scripts/                  # PowerShell automation scripts
+├── scripts/                  # PowerShell automation scripts
 │   ├── GraphUserPhotoSync-Automation.ps1
 │   ├── New-AzGraphAutomationServicePrincipal.ps1
 │   ├── Register-AzProviders.ps1
@@ -70,7 +70,7 @@ graph-automation-infra/
 
 2. Run the service principal + resource group script:
    ```powershell
-   .\Scripts\New-AzGraphAutomationServicePrincipal.ps1 \
+   .\scripts\New-AzGraphAutomationServicePrincipal.ps1 \
      -ResourceGroupName "rgGraphAutomationInfra" \
      -SubscriptionId "<your-subscription-id>" \
      -ServicePrincipalName "terraform-gh-action"
@@ -100,9 +100,9 @@ graph-automation-infra/
 
 4. Register the required Azure providers:
    ```powershell
-      $TenantId = "<your-tenant-id>"
-      $SubscriptionId = "<your-subscription-id>"
-      .\Scripts\Register-AzProviders.ps1
+   $TenantId = "<your-tenant-id>"
+   $SubscriptionId = "<your-subscription-id>"
+   .\scripts\Register-AzProviders.ps1
    ```
    This script:
    - Ensures you're logged into Azure
