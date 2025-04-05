@@ -1,5 +1,6 @@
-# Sample input values for local or CI/CD use
-# Copy this file to terraform.tfvars and update the values
+# terraform.tfvars.example
+# This file is for local testing only.
+# Do NOT include secrets here — use GitHub Actions secrets for CI/CD.
 
 resource_group_name     = "rg-graph-automation"
 location                = "westus"

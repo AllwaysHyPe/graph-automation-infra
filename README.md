@@ -52,16 +52,23 @@ I’ve included a script that creates a scoped service principal specifically fo
     -SubscriptionId "00000000-0000-0000-0000-000000000000"
 ```
 
-That script will output everything you need to create the GitHub repository secrets:
+That script will output the values you’ll need to configure GitHub Actions secrets:
 
 - AZURE_CLIENT_ID
 - AZURE_CLIENT_SECRET
 - AZURE_SUBSCRIPTION_ID
 - AZURE_TENANT_ID
 
+Go to your repository in GitHub, then:
+1. Click **Settings** > **Secrets and variables** > **Actions**
+2. Click **New repository secret** for each value
+3. Name them exactly as above and paste in the values from your script output
+
+GitHub will automatically make these secrets available to your workflow as environment variables. I never commit these directly — and neither should you.
+
 ### 3. Use the provided terraform.tfvars.example file
 
-To keep things simple and safe, I’ve included a `terraform.tfvars.example` file in the root of the repo.
+To keep things simple, I’ve included a `terraform.tfvars.example` file in the root of the repo.
 This lets you quickly get started without committing sensitive values to version control.
 
 Just copy it and fill in your actual values:
@@ -98,6 +105,7 @@ If you're building on top of this, here’s how to harden it further:
 - Use GitHub's OpenID Connect (OIDC) to eliminate secrets entirely
 - Assign custom roles if you don’t need full Contributor access
 - Rotate client secrets regularly or use certificates instead
+- Never commit real credentials into the repo. Use `.example` files and GitHub Actions secrets instead.
 
 ## Inputs
 
@@ -134,3 +142,4 @@ Here are a few things I may add later:
 - Log Analytics integration
 - Role assignment for Microsoft Graph API scopes
 - A cleanup script to remove the service principal when it's no longer needed
+
