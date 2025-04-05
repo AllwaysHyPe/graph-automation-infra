@@ -17,9 +17,8 @@ resource "azurerm_automation_module" "az_accounts" {
   name                    = "Az.Accounts"
   resource_group_name     = var.resource_group_name
   automation_account_name = azurerm_automation_account.automation.name
-  location                = var.location
 
-  content_link {
+  module_link {
     uri                      = var.az_accounts_module_uri
     content_hash             = filebase64sha256(var.az_accounts_zip_path)
     content_hash_algorithm   = "Sha256"

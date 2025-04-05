@@ -6,4 +6,9 @@ resource_group_name     = "rgGraphAutomationInfra"
 location                = "westus"
 automation_account_name = "terraform-gh-action"
 runbook_name            = "GraphUserPhotoSync"
-script_path             = "./Scripts/GraphUserPhotoSync-Automation.ps1"
+script_path             = "./scripts/GraphUserPhotoSync-Automation.ps1"
+
+# Az.Accounts module (for PS7.2 in Azure Automation)
+az_accounts_zip_path       = "./scripts/Az.Accounts.2.12.1.zip"
+az_accounts_module_uri     = "https://github.com/AllwaysHyPe/graph-automation-infra/releases/download/v1.0.0/Az.Accounts.2.12.1.zip"
+az_accounts_module_version = "2.12.1"
