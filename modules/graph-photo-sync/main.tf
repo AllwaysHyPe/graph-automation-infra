@@ -32,7 +32,7 @@ resource "azurerm_automation_runbook" "runbook" {
   automation_account_name = azurerm_automation_account.automation.name
   log_verbose             = true
   log_progress            = true
-  runbook_type            = "PowerShell7" # <-- Make sure this is PS7!
+  runbook_type            = "PowerShell72" # <-- Make sure this is PS7!
   description             = "Runbook to sync user photos with Microsoft Graph"
   content                 = file(var.script_path)
   depends_on              = [
