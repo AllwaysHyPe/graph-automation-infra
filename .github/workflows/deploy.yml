@@ -35,7 +35,7 @@ jobs:
         run: mkdir -p $HOME/.terraform.d/plugin-cache
 
       - name: Terraform Init
-        run: terraform init -plugin-dir=$HOME/.terraform.d/plugin-cache
+        run: terraform init
 
       - name: Terraform Plan
         id: plan
