@@ -42,7 +42,8 @@ You do **not** need to commit a `terraform.tfvars` file or hardcode these in Git
 ```
 graph-automation-infra/
 ├── .github/workflows/        # GitHub Actions for CI/CD
-│   └── deploy.yml
+│   ├── deploy.yml
+│   └── detroy.yml
 ├── modules/graph-photo-sync/ # Terraform module
 │   ├── main.tf
 │   ├── variables.tf
