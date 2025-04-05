@@ -92,6 +92,12 @@ graph-automation-infra/
    Compress-Archive -Path ./modules-out/Az.Accounts/2.12.1/* -DestinationPath ./scripts/Az.Accounts.2.12.1.zip
    ```
 
+   You can verify the hash of the Az.Accounts zip before uploading:
+
+   ```powershell
+   .\scripts\Verify-AzModuleHash.ps1
+
+
 4. Register the required Azure providers:
    ```powershell
       $TenantId = "<your-tenant-id>"

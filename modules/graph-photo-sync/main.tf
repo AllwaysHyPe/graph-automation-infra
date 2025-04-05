@@ -19,9 +19,7 @@ resource "azurerm_automation_module" "az_accounts" {
   automation_account_name = azurerm_automation_account.automation.name
 
   module_link {
-    uri                      = var.az_accounts_module_uri
-    content_hash             = filebase64sha256(var.az_accounts_zip_path)
-    content_hash_algorithm   = "Sha256"
+    uri = var.az_accounts_module_uri
   }
 
   depends_on = [azurerm_automation_account.automation]
