@@ -96,7 +96,7 @@ graph-automation-infra/
 
    ```powershell
    .\scripts\Verify-AzModuleHash.ps1
-
+   ```
 
 4. Register the required Azure providers:
    ```powershell
