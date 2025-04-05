@@ -20,8 +20,6 @@ provider "azurerm" {
   # az provider register --namespace Microsoft.Automation
   # To check status:
   # az provider show --namespace Microsoft.Automation --query "registrationState"
-
-  resource_provider_registrations = "none"
 }
 
 module "graph_photo_sync" {
