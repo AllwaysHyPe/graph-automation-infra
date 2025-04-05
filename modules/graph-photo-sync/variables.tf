@@ -15,6 +15,16 @@ variable "automation_account_name" {
   type        = string
 }
 
+variable "az_accounts_module_uri" {
+  description = "Public URL to the zipped Az.Accounts module for PowerShell 7.2"
+  type        = string
+}
+
+variable "az_accounts_module_version" {
+  description = "Version of Az.Accounts being deployed"
+  type        = string
+}
+
 variable "runbook_name" {
   description = "The name of the runbook to create"
   type        = string

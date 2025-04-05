@@ -29,6 +29,12 @@ You’ll need to add these in **Settings > Secrets and variables > Actions**:
 - `TF_AUTOMATION_ACCOUNT_NAME` (example: `terraform-gh-action`)
 - `TF_RUNBOOK_NAME` (example: `GraphUserPhotoSync`)
 
+### Module installation
+
+- `AZ_ACCOUNTS_MODULE_URI` (example: `https://github.com/AllwaysHyPe/graph-automation-infra/releases/download/v1.0.0/Az.Accounts.2.12.1.zip`)
+- `AZ_ACCOUNTS_ZIP_PATH` (example: `./scripts/Az.Accounts.2.12.1.zip`)
+- `AZ_ACCOUNTS_MODULE_VERSION` (example: `2.12.1`)
+
 You do **not** need to commit a `terraform.tfvars` file or hardcode these in GitHub. They’re all injected via the workflow.
 
 ## Repo Structure
@@ -75,7 +81,18 @@ graph-automation-infra/
    - Create a scoped service principal
    - Output values for GitHub Actions secrets
 
-3. Register the required Azure providers:
+3. Upload the Az.Accounts module (required for PowerShell 7.2)
+
+   This module expects the `Az.Accounts` PowerShell module (version 2.12.1 or higher) to be pre-packaged and hosted at a public URL, such as a GitHub Release.
+
+   You can use the provided zip file in this repo or create your own:
+
+   ```powershell
+   Save-Module -Name Az.Accounts -RequiredVersion 2.12.1 -Path ./modules-out
+   Compress-Archive -Path ./modules-out/Az.Accounts/2.12.1/* -DestinationPath ./scripts/Az.Accounts.2.12.1.zip
+   ```
+
+4. Register the required Azure providers:
    ```powershell
       $TenantId = "<your-tenant-id>"
       $SubscriptionId = "<your-subscription-id>"
@@ -90,9 +107,9 @@ graph-automation-infra/
       - ```Mirosoft.Authorization```
    Only required once per subscription.
 
-4. Add all required secrets to your GitHub repo (see list above).***Settings*** > ***Secrets and variables*** > ***Actions***.
+5. Add all required secrets to your GitHub repo (see list above).***Settings*** > ***Secrets and variables*** > ***Actions***.
 
-5. Trigger the deployment workflow
+6. Trigger the deployment workflow
 - Go to the **Actions** tab in GitHub
 - Select **Deploy Graph Automation Infra** workflow
 - Click **Run workflow**
@@ -103,10 +120,38 @@ This will:
 - Run ```terraform init```, ```plan```, and ```apply```
 - Upload the PowerShell runbook to the Automation Account
 
+---
+
+### 7. Destroy the Terraform-managed infrastructure
+
+To tear down all Terraform-managed resources (while keeping the resource group intact for future use), use the `destroy.yml` workflow.
+
+#### Steps to Run It
+
+1. Go to the **Actions** tab in your GitHub repository  
+2. Select **Destroy Graph Automation Infra**
+3. Click **Run workflow**
+
+This workflow will:
+- Authenticate to Azure using your GitHub Actions secrets
+- Run `terraform destroy -auto-approve`
+- Remove all Terraform-managed resources:
+  - Automation Account
+  - PowerShell Runbook
+  - Az.Accounts module (if installed by Terraform)
+
+The resource group will remain since it's managed outside Terraform via the `New-AzGraphAutomationServicePrincipal.ps1` script.
+
+---
+
 ## Notes
 - The Automation Account uses a system-assigned managed identity
 - Provider auto-registration is disabled (see ```main.tf```)
 - Required providers must be manually registered via the helper script
 - Secrets are passed via GitHub Actions without committing ```.tfvars``` files
+- The runbook is deployed using PowerShell 7.2 (`runbook_type = "PowerShell7"`)
+- The `Az.Accounts` module is deployed to the Automation Account using a `.zip` from a public URI
+- Terraform validates the module with a local hash but does not upload it directly
+
 
 
