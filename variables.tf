@@ -20,6 +20,21 @@ variable "runbook_name" {
   default     = "GraphUserPhotoSync"
 }
 
+variable "az_accounts_zip_path" {
+  description = "Local path to the Az.Accounts zip file used for hash validation"
+  type        = string
+}
+
+variable "az_accounts_module_uri" {
+  description = "Public URL to the zipped Az.Accounts module"
+  type        = string
+}
+
+variable "az_accounts_module_version" {
+  description = "Version of the Az.Accounts module being installed"
+  type        = string
+}
+
 variable "script_path" {
   description = "Path to the PowerShell script that will be uploaded as a runbook"
   type        = string
