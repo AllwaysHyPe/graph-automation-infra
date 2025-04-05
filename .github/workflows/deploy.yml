@@ -39,7 +39,14 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -out=tfplan
+        run: |
+          terraform plan \
+            -var="resource_group_name=${{ secrets.TF_RESOURCE_GROUP_NAME }}" \
+            -var="location=${{ secrets.TF_LOCATION }}" \
+            -var="automation_account_name=${{ secrets.TF_AUTOMATION_ACCOUNT_NAME }}" \
+            -var="runbook_name=${{ secrets.TF_RUNBOOK_NAME }}" \
+            -var="script_path=./Scripts/GraphUserPhotoSync-Automation.ps1" \
+            -out=tfplan
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan

@@ -6,17 +6,37 @@ Here's what I’m setting up:
 
 - A Resource Group
 - An Azure Automation Account
-- A Managed Identity
+- A System-Assigned Managed Identity
 - My PowerShell Runbook
 - A GitHub Actions CI/CD workflow
 
 If you're looking for the actual PowerShell automation logic that syncs user photos to Microsoft Graph, that's in my [graph-automation](https://github.com/AllwaysHyPe/graph-automation) repo.
+
+## Required GitHub Actions Secrets
+
+To deploy infrastructure with GitHub Actions, I pass everything securely using repo-level secrets.
+You’ll need to add these in **Settings > Secrets and variables > Actions**:
+
+### Azure authentication
+- `AZURE_CLIENT_ID`
+- `AZURE_CLIENT_SECRET`
+- `AZURE_SUBSCRIPTION_ID`
+- `AZURE_TENANT_ID`
+
+### Terraform input variables
+- `TF_RESOURCE_GROUP_NAME` (example: `rgGraphAutomationInfra`)
+- `TF_LOCATION` (example: `westus`)
+- `TF_AUTOMATION_ACCOUNT_NAME` (example: `terraform-gh-action`)
+- `TF_RUNBOOK_NAME` (example: `GraphUserPhotoSync`)
+
+You do **not** need to commit a `terraform.tfvars` file or hardcode these in GitHub. They’re all injected via the workflow.
 
 ## Repo Structure
 
 ```
 graph-automation-infra/
 ├── .github/workflows/        # GitHub Actions for CI/CD
+│   └── deploy.yml
 ├── modules/graph-photo-sync/ # Terraform module
 │   ├── main.tf
 │   ├── variables.tf
@@ -33,109 +53,36 @@ graph-automation-infra/
 └── README.md
 ```
 
-## Getting Started
+## How to Deploy
 
-### 1. Clone this repository
+1. Clone this repo:
+   ```powershell
+   git clone https://github.com/AllwaysHyPe/graph-automation-infra.git
+   cd graph-automation-infra
+   ```
 
-```powershell
-git clone https://github.com/AllwaysHyPe/graph-automation-infra.git
-Set-Location graph-automation-infra
-```
+2. Run the service principal + resource group script:
+   ```powershell
+   .\Scripts\New-AzGraphAutomationServicePrincipal.ps1 \
+     -ResourceGroupName "rgGraphAutomationInfra" \
+     -SubscriptionId "<your-subscription-id>" \
+     -ServicePrincipalName "terraform-gh-action"
+   ```
+   This will create:
+   - A new resource group (if needed)
+   - A scoped service principal
+   - The values you need to add to GitHub Actions secrets
 
-### 2. Configure Azure authentication
+3. Add all required secrets to your GitHub repo (see list above).
 
-I’ve included a script that creates a scoped service principal specifically for this Terraform deployment:
+4. Push your code (or just open the repo) and go to the **Actions** tab.
+   Select the **Deploy Graph Automation Infra** workflow.
 
-```powershell
-.\Scripts\New-AzGraphAutomationServicePrincipal.ps1 `
-    -ResourceGroupName "my-resource-group" `
-    -SubscriptionId "00000000-0000-0000-0000-000000000000"
-```
+5. Click **Run workflow**.
 
-That script will output the values you’ll need to configure GitHub Actions secrets:
-
-- AZURE_CLIENT_ID
-- AZURE_CLIENT_SECRET
-- AZURE_SUBSCRIPTION_ID
-- AZURE_TENANT_ID
-
-Go to your repository in GitHub, then:
-1. Click **Settings** > **Secrets and variables** > **Actions**
-2. Click **New repository secret** for each value
-3. Name them exactly as above and paste in the values from your script output
-
-GitHub will automatically make these secrets available to your workflow as environment variables. I never commit these directly — and neither should you.
-
-### 3. Use the provided terraform.tfvars.example file
-
-To keep things simple, I’ve included a `terraform.tfvars.example` file in the root of the repo.
-This lets you quickly get started without committing sensitive values to version control.
-
-Just copy it and fill in your actual values:
-
-```powershell
-Copy-Item terraform.tfvars.example terraform.tfvars
-```
-
-I never rename the example file directly because I don’t want to accidentally check in real secrets. Terraform will automatically load `terraform.tfvars` during `init`, `plan`, and `apply`.
-
-```hcl
-resource_group_name     = "rg-graph-automation"
-location                = "westus"
-automation_account_name = "graphautomation"
-runbook_name            = "GraphUserPhotoSync"
-script_path             = "./Scripts/GraphUserPhotoSync-Automation.ps1"
-```
-
-### 4. Initialize Terraform locally
-
-```powershell
-terraform init
-terraform plan -out=tfplan
-terraform apply tfplan
-```
-
-You can also trigger the GitHub Actions workflow manually from the Actions tab.
-
-## Security Note
-
-For GitHub Actions, I use a dedicated service principal with **Contributor** permissions scoped only to the resource group. I intentionally avoid granting `Owner` permissions.
-
-If you're building on top of this, here’s how to harden it further:
-- Use GitHub's OpenID Connect (OIDC) to eliminate secrets entirely
-- Assign custom roles if you don’t need full Contributor access
-- Rotate client secrets regularly or use certificates instead
-- Never commit real credentials into the repo. Use `.example` files and GitHub Actions secrets instead.
-
-## Inputs
-
-These are the Terraform variables I use. You can customize them using `terraform.tfvars` or pass them via CLI:
-
-| Variable                  | Description                          | Default                             |
-|---------------------------|--------------------------------------|-------------------------------------|
-| `resource_group_name`     | Azure resource group name            | —                                   |
-| `location`                | Azure region                         | `westus`                            |
-| `automation_account_name` | Name of the automation account       | —                                   |
-| `runbook_name`            | Name of the runbook                  | `GraphUserPhotoSync`               |
-| `script_path`             | Path to the automation script        | `./Scripts/GraphUserPhotoSync-Automation.ps1` |
-
-## GitHub Actions Workflow
-
-My pipeline includes:
-
-- Azure login using the service principal
-- Terraform init, plan, and apply steps
-- Runbook upload and publish
-
-I’ve set it up with a `workflow_dispatch` trigger so you can run it manually.
-
-## Future Improvements
-
-Here are a few things I may add later:
-
-- Hybrid Worker group provisioning
-- Arc-enabled server registration
-- Log Analytics integration
-- Role assignment for Microsoft Graph API scopes
-- A cleanup script to remove the service principal when it's no longer needed
+This will:
+- Authenticate to Azure using the secrets
+- Inject your Terraform variables
+- Run `terraform init`, `plan`, and `apply`
+- Upload the PowerShell runbook to your Automation Account
 
