@@ -18,11 +18,18 @@ If you're looking for the actual PowerShell automation logic that syncs user pho
 graph-automation-infra/
 ├── .github/workflows/        # GitHub Actions for CI/CD
 ├── modules/graph-photo-sync/ # Terraform module
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── README.md
 ├── Scripts/                  # PowerShell automation scripts
 │   ├── GraphUserPhotoSync-Automation.ps1
-│   └── New-AzGraphAutomationServicePrincipal.ps1
+│   ├── New-AzGraphAutomationServicePrincipal.ps1
+│   └── Remove-AzGraphAutomationServicePrincipal.ps1
 ├── main.tf                   # Root Terraform configuration
 ├── variables.tf              # Input variables
+├── outputs.tf                # Terraform outputs
+├── terraform.tfvars.example # Sample input values for local/dev use
 └── README.md
 ```
 
@@ -52,9 +59,28 @@ That script will output everything you need to create the GitHub repository secr
 - AZURE_SUBSCRIPTION_ID
 - AZURE_TENANT_ID
 
-### 3. Initialize Terraform locally
+### 3. Use the provided terraform.tfvars.example file
 
-If you want to test everything from your terminal:
+To keep things simple and safe, I’ve included a `terraform.tfvars.example` file in the root of the repo.
+This lets you quickly get started without committing sensitive values to version control.
+
+Just copy it and fill in your actual values:
+
+```powershell
+Copy-Item terraform.tfvars.example terraform.tfvars
+```
+
+I never rename the example file directly because I don’t want to accidentally check in real secrets. Terraform will automatically load `terraform.tfvars` during `init`, `plan`, and `apply`.
+
+```hcl
+resource_group_name     = "rg-graph-automation"
+location                = "westus"
+automation_account_name = "graphautomation"
+runbook_name            = "GraphUserPhotoSync"
+script_path             = "./Scripts/GraphUserPhotoSync-Automation.ps1"
+```
+
+### 4. Initialize Terraform locally
 
 ```powershell
 terraform init
@@ -108,4 +134,3 @@ Here are a few things I may add later:
 - Log Analytics integration
 - Role assignment for Microsoft Graph API scopes
 - A cleanup script to remove the service principal when it's no longer needed
-

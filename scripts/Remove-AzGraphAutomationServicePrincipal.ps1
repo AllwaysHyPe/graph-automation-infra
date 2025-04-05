@@ -1,62 +1,55 @@
-<#
-.SYNOPSIS
-Removes a service principal that was created for Terraform or GitHub Actions.
-
-.DESCRIPTION
-This script deletes a registered Azure AD service principal by name. It's helpful for cleaning up
-after a GitHub Actions pipeline has been decommissioned or rotated.
-
-.EXAMPLE
-.\Remove-AzGraphAutomationServicePrincipal.ps1 `
-    -ServicePrincipalName "terraform-gh-action"
-#>
-
-param (
-    [Parameter(Mandatory)]
-    [string]$ServicePrincipalName
-)
-
 function log {
-    param(
+    param (
         [string]$Message
     )
     $TimeStamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Write-Output "$TimeStamp - $Message"
 }
 
-log "Checking if you're logged in to Azure..."
-$accountCheck = az account show --only-show-errors 2>&1
+# Define input value
+# Example usage: $ServicePrincipalName = "terraform-gh-action"
+$ServicePrincipalName = ""
+
+if (-not $ServicePrincipalName) {
+    log "ERROR: Please provide a valid ServicePrincipalName."
+    exit 1
+}
+
+log "Checking Azure login status..."
+$accountCheck = az account show --only-show-errors | Out-String
 
 if ($LASTEXITCODE -ne 0) {
-    log "Not logged in. Attempting Azure login..."
+    log "Not logged in. Attempting login..."
     az login --only-show-errors | Out-Null
     if ($LASTEXITCODE -ne 0) {
-        throw "Azure login failed. Please ensure you have the Azure CLI installed and configured."
+        log "ERROR: Azure login failed."
+        exit 1
     }
     log "Login successful."
 } else {
     log "Already logged in to Azure."
 }
 
-log "Looking up the app ID for '$ServicePrincipalName'..."
+log "Looking up appId for '$ServicePrincipalName'..."
 $appId = az ad sp list `
     --display-name $ServicePrincipalName `
     --query '[0].appId' `
     --output tsv `
-    --only-show-errors
+    --only-show-errors | Out-String
 
 if (-not $appId) {
-    log "No service principal found with the name '$ServicePrincipalName'. Nothing to remove."
-    return
+    log "No service principal found with the name '$ServicePrincipalName'. Nothing to delete."
+    exit 0
 }
 
-log "Service principal found. App ID: $appId"
-log "Deleting the service principal..."
+log "Found service principal. AppId: $appId"
+log "Deleting service principal..."
 
-az ad sp delete --id $appId --only-show-errors
+az ad sp delete --id $appId --only-show-errors | Out-Null
 
 if ($LASTEXITCODE -eq 0) {
-    log "Service principal '$ServicePrincipalName' deleted successfully."
+    log "Successfully deleted service principal '$ServicePrincipalName'."
 } else {
-    throw "Failed to delete service principal '$ServicePrincipalName'."
+    log "ERROR: Failed to delete service principal '$ServicePrincipalName'."
+    exit 1
 }

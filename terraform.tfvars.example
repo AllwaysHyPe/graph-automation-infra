@@ -1,0 +1,8 @@
+# Sample input values for local or CI/CD use
+# Copy this file to terraform.tfvars and update the values
+
+resource_group_name     = "rg-graph-automation"
+location                = "westus"
+automation_account_name = "graphautomation"
+runbook_name            = "GraphUserPhotoSync"
+script_path             = "./Scripts/GraphUserPhotoSync-Automation.ps1"

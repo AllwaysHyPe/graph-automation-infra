@@ -1,13 +1,12 @@
-# modules/graph-photo-sync/variables.tf
-
 variable "resource_group_name" {
-  description = "The name of the Azure resource group to deploy into"
+  description = "The name of the Azure resource group to create or use"
   type        = string
 }
 
 variable "location" {
-  description = "The Azure region for resource deployment"
+  description = "The Azure region to deploy into"
   type        = string
+  default     = "westus"
 }
 
 variable "automation_account_name" {
@@ -18,6 +17,7 @@ variable "automation_account_name" {
 variable "runbook_name" {
   description = "The name of the runbook to create"
   type        = string
+  default     = "GraphUserPhotoSync"
 }
 
 variable "script_path" {

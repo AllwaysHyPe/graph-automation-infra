@@ -1,73 +1,55 @@
-<#
-.SYNOPSIS
-Creates a scoped service principal for Terraform use in GitHub Actions.
-
-.DESCRIPTION
-This script creates an Azure AD service principal scoped to a resource group
-with Contributor permissions. It returns the values needed to configure GitHub
-repository secrets for use with GitHub Actions.
-
-.EXAMPLE
-.\New-AzGraphAutomationServicePrincipal.ps1 `
-    -ResourceGroupName "rg-my-automation" `
-    -SubscriptionId "00000000-0000-0000-0000-000000000000"
-#>
-
-param (
-    [Parameter(Mandatory)]
-    [string]$ResourceGroupName,
-
-    [Parameter(Mandatory)]
-    [string]$SubscriptionId,
-
-    [string]$ServicePrincipalName = "terraform-gh-action"
-)
-
 function log {
-    param(
+    param (
         [string]$Message
     )
     $TimeStamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
     Write-Output "$TimeStamp - $Message"
 }
 
-# Check Azure login
-log "Checking if you're logged in to Azure..."
-$accountCheck = az account show --only-show-errors 2>&1
+# Define input value
+# Example usage: $ServicePrincipalName = "terraform-gh-action"
+$ServicePrincipalName = ""
+
+if (-not $ServicePrincipalName) {
+    log "ERROR: Please provide a valid ServicePrincipalName."
+    exit 1
+}
+
+log "Checking Azure login status..."
+$accountCheck = az account show --only-show-errors | Out-String
 
 if ($LASTEXITCODE -ne 0) {
-    log "Not logged in. Attempting Azure login..."
+    log "Not logged in. Attempting login..."
     az login --only-show-errors | Out-Null
     if ($LASTEXITCODE -ne 0) {
-        throw "Azure login failed. Please ensure you have the Azure CLI installed and configured."
+        log "ERROR: Azure login failed."
+        exit 1
     }
     log "Login successful."
 } else {
     log "Already logged in to Azure."
 }
 
-# Create the scoped service principal
-log "Creating service principal '$ServicePrincipalName' scoped to resource group '$ResourceGroupName'..."
+log "Looking up appId for '$ServicePrincipalName'..."
+$appId = az ad sp list `
+    --display-name $ServicePrincipalName `
+    --query '[0].appId' `
+    --output tsv `
+    --only-show-errors | Out-String
 
-$spJson = az ad sp create-for-rbac `
-    --name $ServicePrincipalName `
-    --role Contributor `
-    --scopes /subscriptions/$SubscriptionId/resourceGroups/$ResourceGroupName `
-    --sdk-auth `
-    --only-show-errors
-
-if ($LASTEXITCODE -ne 0) {
-    throw "Failed to create the service principal. Make sure you have permissions to assign roles."
+if (-not $appId) {
+    log "No service principal found with the name '$ServicePrincipalName'. Nothing to delete."
+    exit 0
 }
 
-$sp = $spJson | ConvertFrom-Json
+log "Found service principal. AppId: $appId"
+log "Deleting service principal..."
 
-log "Service principal created successfully."
-log "Add the following values as GitHub repository secrets:"
+az ad sp delete --id $appId --only-show-errors | Out-Null
 
-"`n------------------- GITHUB SECRETS -------------------"
-"AZURE_CLIENT_ID       = $($sp.clientId)"
-"AZURE_CLIENT_SECRET   = $($sp.clientSecret)"
-"AZURE_SUBSCRIPTION_ID = $SubscriptionId"
-"AZURE_TENANT_ID       = $($sp.tenantId)"
-"-------------------------------------------------------`n"
+if ($LASTEXITCODE -eq 0) {
+    log "Successfully deleted service principal '$ServicePrincipalName'."
+} else {
+    log "ERROR: Failed to delete service principal '$ServicePrincipalName'."
+    exit 1
+}
