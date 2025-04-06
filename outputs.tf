@@ -7,7 +7,3 @@ output "runbook_name" {
   description = "The name of the runbook that was uploaded"
   value       = module.graph_photo_sync.runbook_name
 }
-
-output "az_accounts_module_version" {
-  value = var.az_accounts_module_version
-}
