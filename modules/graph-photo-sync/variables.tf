@@ -18,6 +18,12 @@ variable "runbook_name" {
   type        = string
 }
 
+variable "runbook_type" {
+  description = "Runtime version for the Azure Automation runbook"
+  type        = string
+  default     = "PowerShell72"
+}
+
 variable "script_path" {
   description = "Local path to the PowerShell script that will be uploaded as a runbook"
   type        = string

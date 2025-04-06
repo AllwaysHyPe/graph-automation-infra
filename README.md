@@ -116,6 +116,9 @@ graph-automation-infra/
 
 5. Add all required secrets to your GitHub repo (see list above).***Settings*** > ***Secrets and variables*** > ***Actions***.
 
+> Note: The runbook is deployed with PowerShell 7.2 runtime (`runbook_type = "PowerShell72"`) by default.  
+> No override is needed unless you're testing something different.
+
 6. Trigger the deployment workflow
 - Go to the **Actions** tab in GitHub
 - Select **Deploy Graph Automation Infra** workflow
@@ -132,9 +135,8 @@ This will:
 - Provider auto-registration is disabled (see ```main.tf```)
 - Required providers must be manually registered via the helper script
 - Secrets are passed via GitHub Actions without committing ```.tfvars``` files
-- The runbook is deployed using PowerShell 7.2 (`runbook_type = "PowerShell7"`)
-- The `Az.Accounts` module is deployed to the Automation Account using a `.zip` from a public URI
-- Terraform validates the module with a local hash but does not upload it directly
-
-
-
+- The `GraphUserPhotoSync-Automation.ps1` script requires PowerShell 7.2
+- The runbook uses PowerShell 7.2 (set via `runbook_type = "PowerShell72"`)
+- PowerShell 5.1 is not supported — the script depends on PS7.2 features
+- The runtime is managed through a module variable and defaults to 7.2
+- You should not override this unless intentionally testing other environments

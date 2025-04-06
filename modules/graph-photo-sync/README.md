@@ -25,6 +25,7 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
 | `location`               | string | Azure region to deploy resources in                                     |
 | `automation_account_name`| string | Name of the Automation Account                                          |
 | `runbook_name`           | string | Name of the runbook to create                                           |
+| `runbook_type` | string | Runtime version for the runbook (default: `"PowerShell72"`) |
 | `script_path`            | string | Path to the PowerShell script that will become the runbook              |
 | `az_accounts_zip_path`   | string | Local path to the zipped Az.Accounts module (used for hash validation)  |
 | `az_accounts_module_uri` | string | Public URL to the zipped Az.Accounts module used for Automation import  |
@@ -49,6 +50,10 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
   - The `Microsoft.Automation` provider is registered
   - A zipped version of the Az.Accounts module is available at a public URI
   - The local zip file exists for hash validation (but is not uploaded by Terraform)
+  - The runbook script (`GraphUserPhotoSync-Automation.ps1`) is written for PowerShell 7.2
+  - The module defaults `runbook_type` to `"PowerShell72"` and assumes this is the runtime
+
+
 
 ---
 
