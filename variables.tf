@@ -24,18 +24,3 @@ variable "script_path" {
   description = "Local path to the PowerShell script that will be uploaded as a runbook"
   type        = string
 }
-
-variable "az_accounts_zip_path" {
-  description = "Local path to the zipped Az.Accounts module used for content hash validation"
-  type        = string
-}
-
-variable "az_accounts_module_uri" {
-  description = "Public URL to the zipped Az.Accounts module for PowerShell 7.2"
-  type        = string
-}
-
-variable "az_accounts_module_version" {
-  description = "Version of Az.Accounts module being installed"
-  type        = string
-}

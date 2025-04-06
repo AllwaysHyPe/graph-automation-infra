@@ -130,6 +130,19 @@ This will:
 - Run ```terraform init```, ```plan```, and ```apply```
 - Upload the PowerShell runbook to the Automation Account
 
+7. Manually install the Az.Accounts module
+
+Terraform no longer installs the Az.Accounts module due to timeout issues. Run this post-deployment script to import it manually:
+
+```powershell
+$SubscriptionId = "<your-subscription-id>"
+$ResourceGroup = "rgGraphAutomationInfra"
+$AutomationAccount = "terraform-gh-action"
+$ModuleUri = "https://github.com/AllwaysHyPe/graph-automation-infra/releases/download/v1.0.0/Az.Accounts.2.12.1.zip"
+
+.\scripts\Install-AzAccountsModule.ps1
+```
+
 ## Notes
 - The Automation Account uses a system-assigned managed identity
 - Provider auto-registration is disabled (see ```main.tf```)

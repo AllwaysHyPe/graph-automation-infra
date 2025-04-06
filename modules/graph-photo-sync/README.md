@@ -52,7 +52,8 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
   - The local zip file exists for hash validation (but is not uploaded by Terraform)
   - The runbook script (`GraphUserPhotoSync-Automation.ps1`) is written for PowerShell 7.2
   - The module defaults `runbook_type` to `"PowerShell72"` and assumes this is the runtime
-
+  - The module no longer installs the Az.Accounts module via Terraform due to frequent Azure Automation timeouts.
+  - You must run `Install-AzAccountsModule.ps1` manually after deployment to import the Az.Accounts module from a public `.zip` URI.
 
 
 ---

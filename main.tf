@@ -13,12 +13,10 @@ terraform {
 
 provider "azurerm" {
   features {}
+
   # NOTE: This disables automatic resource provider registration.
-  # Make sure required providers are registered manually (e.g., Microsoft.Automation).
-  # To register manually, use:
+  # Register manually:
   # az provider register --namespace Microsoft.Automation
-  # To check status:
-  # az provider show --namespace Microsoft.Automation --query "registrationState"
 }
 
 module "graph_photo_sync" {
@@ -28,7 +26,6 @@ module "graph_photo_sync" {
   automation_account_name     = var.automation_account_name
   runbook_name                = var.runbook_name
   script_path                 = var.script_path
-  az_accounts_zip_path        = "./scripts/Az.Accounts.2.12.1.zip"
-  az_accounts_module_uri      = "https://github.com/AllwaysHyPe/graph-automation-infra/releases/download/v1.0.0/Az.Accounts.2.12.1.zip"
-  az_accounts_module_version  = "2.12.1"
+
+  # PowerShell 7.2 is the default runbook type, no override needed
 }
