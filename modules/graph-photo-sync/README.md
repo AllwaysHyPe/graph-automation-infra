@@ -4,8 +4,6 @@ This Terraform module provisions an Azure Automation Account, a system-assigned 
 
 It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip file hosted at a public URL, such as GitHub Releases.
 
----
-
 ## What This Module Does
 
 - Creates an Azure Automation Account
@@ -14,8 +12,6 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
 - Installs the `Az.Accounts` module (v2.12.1 or newer) using a public URI and local hash
 
 > ⚠️ The resource group must already exist (created manually or by a helper script).
-
----
 
 ## Input Variables
 
@@ -31,7 +27,6 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
 | `az_accounts_module_uri` | string | Public URL to the zipped Az.Accounts module used for Automation import  |
 | `az_accounts_module_version` | string | Version of the Az.Accounts module being installed                    |
 
----
 
 ## Outputs
 
@@ -41,7 +36,6 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
 | `runbook_name`          | The name of the runbook created          |
 | `az_accounts_module_version` | The version of Az.Accounts installed         |
 
----
 
 ## Module Expectations
 
@@ -55,8 +49,6 @@ It also installs the Az.Accounts module (PowerShell 7.2-compatible) using a zip 
   - The module no longer installs the Az.Accounts module via Terraform due to frequent Azure Automation timeouts.
   - You must run `Install-AzAccountsModule.ps1` manually after deployment to import the Az.Accounts module from a public `.zip` URI.
 
-
----
 
 ## Example Usage
 
